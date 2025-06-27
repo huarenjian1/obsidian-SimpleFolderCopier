@@ -1,0 +1,10 @@
+{
+  "id": "simple-folder-copier",
+  "name": "Simple Folder Copier",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Copy a vault folder to an absolute path",
+  "author": "huarenjian",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}
