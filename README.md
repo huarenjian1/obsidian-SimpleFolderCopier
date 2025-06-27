@@ -1,0 +1,2 @@
+# obsidian-SimpleFolderCopier
+将obsidian下指定文件夹复制到电脑中的任意一个文件夹里，用来更新blog或者同步到其他编辑器目录
