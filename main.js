@@ -6,7 +6,8 @@ module.exports = class SimpleFolderCopier extends Plugin {
     async onload() {
         this.settings = Object.assign({
             sourceFolder: "",
-            targetFolder: ""
+            targetFolder: "",
+            cleanTargetFirst: false
         }, await this.loadData() || {});
 
         this.addRibbonIcon("copy", "复制文件夹", async () => {
@@ -29,6 +30,11 @@ module.exports = class SimpleFolderCopier extends Plugin {
         }
 
         try {
+            if (this.settings.cleanTargetFirst) {
+                new Notice("正在清空目标目录...");
+                await fs.rm(target, { recursive: true, force: true });
+            }
+
             await this.copyDirectoryRecursive(source, target);
             new Notice("复制完成");
         } catch (e) {
@@ -38,7 +44,6 @@ module.exports = class SimpleFolderCopier extends Plugin {
     }
 
     async copyDirectoryRecursive(srcDir, destDir) {
-        // 确保目标文件夹存在
         await fs.mkdir(destDir, { recursive: true });
 
         const entries = await fs.readdir(srcDir, { withFileTypes: true });
@@ -100,6 +105,17 @@ class CopierSettingTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.targetFolder || "")
                 .onChange(async (value) => {
                     this.plugin.settings.targetFolder = value;
+                    await this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName("清空目标目录")
+            .setDesc("在复制前先清空目标目录以保持完全一致")
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.cleanTargetFirst || false)
+                .onChange(async (value) => {
+                    this.plugin.settings.cleanTargetFirst = value;
                     await this.plugin.saveSettings();
                 })
             );
